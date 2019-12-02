@@ -59,6 +59,15 @@ int main( int, char*[] )
     VTK_POLYHEDRON, 8, pointIds,
     6, faces->GetPointer());
 
+  // Create string scalar
+  vtkSmartPointer<vtkStringArray> string_data =
+    vtkSmartPointer<vtkStringArray>::New();
+  string_data->SetName("A_String_Array");
+  string_data->InsertNextValue("Hello");
+
+  // Add string array to unstructured grid
+  ugrid->GetCellData()->AddArray(string_data);
+
   // Here we write out the cube.
   vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
     vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
@@ -66,36 +75,5 @@ int main( int, char*[] )
   writer->SetFileName("polyhedron.vtu");
   writer->SetDataModeToAscii();
   writer->Update();
-
-  // Create a mapper and actor
-  vtkSmartPointer<vtkDataSetMapper> mapper =
-    vtkSmartPointer<vtkDataSetMapper>::New();
-  mapper->SetInputData(ugrid);
-
-  vtkSmartPointer<vtkActor> actor =
-    vtkSmartPointer<vtkActor>::New();
-  actor->SetMapper(mapper);
-  actor->GetProperty()->SetColor(
-    colors->GetColor3d("Silver").GetData());
-
-  // Visualize
-  vtkSmartPointer<vtkRenderer> renderer =
-    vtkSmartPointer<vtkRenderer>::New();
-  vtkSmartPointer<vtkRenderWindow> renderWindow =
-    vtkSmartPointer<vtkRenderWindow>::New();
-  renderWindow->SetWindowName("Polyhedron");
-  renderWindow->AddRenderer(renderer);
-  vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-    vtkSmartPointer<vtkRenderWindowInteractor>::New();
-  renderWindowInteractor->SetRenderWindow(renderWindow);
-
-  renderer->AddActor(actor);
-  renderer->SetBackground(colors->GetColor3d("Salmon").GetData());
-  renderer->ResetCamera();
-  renderer->GetActiveCamera()->Azimuth(30);
-  renderer->GetActiveCamera()->Elevation(30);
-  renderWindow->Render();
-  renderWindowInteractor->Start();
-
-  return EXIT_SUCCESS;
+  writer->Write();
 }
