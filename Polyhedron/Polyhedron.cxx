@@ -15,6 +15,7 @@
 #include <vtkRenderWindowInteractor.h>
 #include <vtkSmartPointer.h>
 #include <vtkUnstructuredGrid.h>
+// #include <vtkXMLPUnstructuredGridWriter.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
 int main( int, char*[] )
@@ -68,11 +69,21 @@ int main( int, char*[] )
   // Add string array to unstructured grid
   ugrid->GetCellData()->AddArray(string_data);
 
-  // Here we write out the cube.
+  // Here we write out the cube in serial.
   vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
     vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
   writer->SetInputData(ugrid);
   writer->SetFileName("polyhedron.vtu");
+
+  // // Here we write out the cube in parallel.
+  // vtkSmartPointer<vtkXMLPUnstructuredGridWriter> writer =
+  //   vtkSmartPointer<vtkXMLPUnstructuredGridWriter>::New();
+  // writer->SetInputData(ugrid);
+  // writer->SetFileName("parallel_polyhedron.pvtu");
+  // writer->SetNumberOfPieces(1);
+  // writer->SetStartPiece(0);
+  // writer->SetEndPiece(0);
+
   writer->SetDataModeToAscii();
   writer->Update();
   writer->Write();
